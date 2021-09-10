@@ -86,19 +86,17 @@ poem.forEach(createBlock);
 function verifyBlock(block) {
 	// index must be an integer >=0
 	if (block.index < 0) return false;
-	// for the genesis block only
-	if (block.index === 0) {
-		// the hash must be '000000'
-		if (block.hash !== '000000') return false;
-	} else {
-		// data must be non-empty
-		if (!block.data) return false;
-		// prevHash must be non-empty
-		if (!block.prevHash) return false;
-		// the hash must match what recomputing the hash with blockHash(..) produces
-		if (block.hash !== blockHash(block)) return false;
-	}
-
+	// for the genesis block only, the hash must be '000000'
+	if (block.index === 0 && block.hash !== '000000') return false;
+	// data must be non-empty
+	if (!block.data) return false;
+	// prevHash must be non-empty
+	if (!block.prevHash) return false;
+	// the hash must match what recomputing the hash with blockHash(..) produces
+	if (block.hash !== blockHash(block)) return false;
+	// the linkage between one block and it's previous block must be checked
+	if (block.prevHash !== Blockchain.blocks[block.index - 1].hash) return false;
+	// all checks have passed so we are good
 	return true;
 }
 
